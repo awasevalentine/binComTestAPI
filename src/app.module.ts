@@ -1,3 +1,5 @@
+import { Party } from './core/domain/entities/entity.party';
+import { LGA } from './core/domain/entities/entity.lga';
 import { PollingUnitController } from './api/controllers/punit.controller';
 import { LGAController } from './api/controllers/lga.controller';
 import { Module } from '@nestjs/common';
@@ -6,6 +8,8 @@ import { AppService } from './app.service';
 import { LgaService } from './core/services/lga.service';
 import { PUnitService } from './core/services/punit.service';
 import { TypeOrmModule } from '@nestjs/typeorm/dist/typeorm.module';
+import { Ward } from './core/domain/entities/entity.ward';
+import { PollingUnit } from './core/domain/entities/entity.polingunit';
 
 @Module({
   imports: [
@@ -16,7 +20,7 @@ import { TypeOrmModule } from '@nestjs/typeorm/dist/typeorm.module';
       username: 'root',
       password: 'p@ssword001',
       database: 'bincomphptest',
-      entities: [],
+      entities: [LGA, Party, Ward,PollingUnit],
       synchronize: true,
     })
   ],
