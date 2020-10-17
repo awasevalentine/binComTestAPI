@@ -1,8 +1,59 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, LoggerService } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { PollingUnit } from '../domain/entities/entity.polingunit';
+import { PollingUnitResult } from '../domain/entities/entity.pu_result';
+import { NewPolingUnitResult } from '../domain/models/DTOs/pollingunit.model';
 
 @Injectable()
 export class PUnitService {
-  getHello(): string {
-    return 'Hello World!';
+    
+    private readonly _logger: LoggerService = new Logger();
+    
+    constructor(@InjectRepository(PollingUnit) private _puRepository: Repository<PollingUnit>,
+        @InjectRepository(PollingUnitResult) private _puResultRepository: Repository<PollingUnitResult>
+    ) {
+        
+    }
+
+  async getPollingUnitResultById(unitId: number): Promise<PollingUnitResult[]> {
+        const puResults = await this._puResultRepository.find({where : {PUnitId: unitId}})
+        return puResults;
+  }
+
+  async getPollingUnits(): Promise<PollingUnit[]> {
+    return await this._puRepository.find();
+  }
+
+  async addPollingUnitResut(result: NewPolingUnitResult): Promise<any> {
+      let pu = await this._puRepository.findOne({where: {PUnitName: result.pUnitName}});
+      if(!pu) {
+          pu = await this.createPollingUnit(result);
+      }
+      if(!pu)
+        return {status: false, statusMessage: `Failed to create polling unit with name ${result.pUnitName}`};
+      const partyResults = result.Scores.map(pResult => {
+          const partyRes = new PollingUnitResult();
+          partyRes.PUnitId = pu.uniqueid;
+          partyRes.Party = pResult.partyName;
+          partyRes.PartyScore = pResult.partyScore;
+          return partyRes;
+        });
+      const saveRes = await this._puResultRepository.save(partyResults);
+      return {status: saveRes.length > 0, statusMessage: saveRes.length > 0 ? `Success saved party results for polling unit ${result.pUnitName}` :  `Failed to save party results for polling unit ${result.pUnitName}`};
+  }
+
+  private async createPollingUnit(info: NewPolingUnitResult): Promise<PollingUnit> {
+      const pu = new PollingUnit();
+      pu.Description = info.pUnitName;
+      pu.LgaId = info.lgaId;
+      pu.PUnitName = info.pUnitName;
+      pu.PUnitNumber = info.pUnitNumber;
+      pu.UniqueWardId = info.UniqueWardId;
+      pu.UnitId = info.pUnitId;
+      pu.WardId = info.wardId;
+
+      const res = await this._puRepository.save(pu);
+      return res;
   }
 }
