@@ -7,7 +7,7 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   initSwagger(app);
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3199);
 }
 
 function initSwagger(app: NestExpressApplication) {
