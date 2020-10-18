@@ -11,6 +11,7 @@ import { TypeOrmModule } from '@nestjs/typeorm/dist/typeorm.module';
 import { Ward } from './core/domain/entities/entity.ward';
 import { PollingUnit } from './core/domain/entities/entity.polingunit';
 import { PollingUnitResult } from './core/domain/entities/entity.pu_result';
+import { PartyController } from './api/controllers/parties.controller';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { PollingUnitResult } from './core/domain/entities/entity.pu_result';
     }),
     TypeOrmModule.forFeature([PollingUnit, Party, Ward, LGA, PollingUnitResult])
   ],
-  controllers: [AppController, LGAController, PollingUnitController],
+  controllers: [LGAController, PollingUnitController,PartyController],
   providers: [AppService, LgaService, PUnitService],
 })
 export class AppModule {}

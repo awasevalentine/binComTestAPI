@@ -1,3 +1,4 @@
+import { Party } from './../domain/entities/entity.party';
 import { Injectable, Logger, LoggerService } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
@@ -14,7 +15,8 @@ export class LgaService {
     constructor(@InjectRepository(PollingUnit) private _puRepository: Repository<PollingUnit>,
         @InjectRepository(LGA) private _lgaRepository: Repository<LGA>, 
         @InjectRepository(PollingUnitResult) private _puResultRepository: Repository<PollingUnitResult>,
-        @InjectRepository(Ward) private _wardRepository: Repository<Ward>
+        @InjectRepository(Ward) private _wardRepository: Repository<Ward>,
+        @InjectRepository(Party) private _partyRepository: Repository<Party>,
     ) {
 
     }
@@ -36,5 +38,9 @@ export class LgaService {
 
   async getWardsInLGA(lgaId: number): Promise<Ward[]> {
     return this._wardRepository.find({where: {LgaId: lgaId}});
+  }
+  
+  async getPartyList(): Promise<Party[]>{
+    return this._partyRepository.find();
   }
 }
