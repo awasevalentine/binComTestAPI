@@ -17,11 +17,11 @@ import { PartyController } from './api/controllers/parties.controller';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'remotemysql.com',
+      host: 'localhost',
       port: 3306,
-      username: 'HwQN6YFJZy',
-      password: 'YNs6VmEBWP',
-      database: 'HwQN6YFJZy',
+      username: 'root',
+      password: 'p@ssword001',
+      database: 'bincomphptest',
       entities: [LGA, Party, Ward,PollingUnit, PollingUnitResult],
       synchronize: false,
     }),

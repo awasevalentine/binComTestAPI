@@ -26,6 +26,7 @@ export class PUnitService {
   }
 
   async addPollingUnitResut(result: NewPolingUnitResult): Promise<any> {
+      this._logger.debug(result);
       let pu = await this._puRepository.findOne({where: {PUnitName: result.pUnitName}});
       if(!pu) {
           pu = await this.createPollingUnit(result);
@@ -35,11 +36,17 @@ export class PUnitService {
       const partyResults = result.Scores.map(pResult => {
           const partyRes = new PollingUnitResult();
           partyRes.PUnitId = pu.uniqueid;
-          partyRes.Party = pResult.partyName;
+          partyRes.Party = pResult.partyName.substring(0,4);
           partyRes.PartyScore = pResult.partyScore;
+          partyRes.CreatedDate = new Date();
+          partyRes.EnteredBy = "SYSTEM";
+          partyRes.UserIpAddress =  result.sourceIpAddress;
           return partyRes;
         });
+      
       const saveRes = await this._puResultRepository.save(partyResults);
+      this._logger.debug('saved pu result');
+      this._logger.debug(saveRes);
       return {status: saveRes.length > 0, statusMessage: saveRes.length > 0 ? `Success saved party results for polling unit ${result.pUnitName}` :  `Failed to save party results for polling unit ${result.pUnitName}`};
   }
 
@@ -52,8 +59,12 @@ export class PUnitService {
       pu.UniqueWardId = info.UniqueWardId;
       pu.UnitId = info.pUnitId;
       pu.WardId = info.wardId;
+      pu.CreatedDate = new Date();
+      pu.EnteredBy = "SYSTEM";
+      pu.UserIpAddress =  info.sourceIpAddress;
 
       const res = await this._puRepository.save(pu);
+      this._logger.debug(res);
       return res;
   }
 }

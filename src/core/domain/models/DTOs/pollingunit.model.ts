@@ -6,6 +6,7 @@ export interface NewPolingUnitResult {
     UniqueWardId
     lgaId: number,
     Scores: PartyResult[]
+    sourceIpAddress?: string;
 }
 
 export interface PartyResult {

@@ -27,4 +27,14 @@ export class PollingUnit {
   @Column({name:"polling_unit_description"})
   Description: string;
 
+  @Column({name:"entered_by_user"})
+  EnteredBy: string;
+
+  @Column({name:"date_entered", type:"datetime"})
+  CreatedDate: Date;
+
+  @Column({name: "user_ip_address"})
+  UserIpAddress: string;
+
+
 }

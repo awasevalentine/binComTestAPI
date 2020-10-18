@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Ip, Param, Post, Query } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { PollingUnit } from 'src/core/domain/entities/entity.polingunit';
 import { NewPolingUnitResult } from 'src/core/domain/models/DTOs/pollingunit.model';
@@ -19,8 +19,10 @@ export class PollingUnitController {
       return await this._pUnitService.getPollingUnitResultById(pUnitId);
   }
   @Post("createResult")
-  async CreatePUnitResult(@Body() resultPayload: NewPolingUnitResult): Promise<any> {
+  async CreatePUnitResult(@Body() resultPayload: NewPolingUnitResult, @Ip() ipAddress): Promise<any> {
       //please validate payload here.
+      if(resultPayload) 
+        resultPayload['sourceIpAddress'] = ipAddress;
       return await this._pUnitService.addPollingUnitResut(resultPayload);
   }
 }
